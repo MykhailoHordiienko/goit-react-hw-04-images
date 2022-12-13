@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 export class Modal extends Component {
   handleClickBacdrop = e => {
@@ -30,3 +31,8 @@ export class Modal extends Component {
     );
   }
 }
+
+Modal.propTypes = {
+  imgUrl: PropTypes.array.isRequired,
+  alt: PropTypes.string.isRequired,
+};
