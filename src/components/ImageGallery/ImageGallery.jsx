@@ -1,10 +1,14 @@
 import { ImageGalleryItem } from 'components/ImageGalleryItem/ImageGalleryItem';
 import React from 'react';
 
-export const ImageGallery = () => {
+export const ImageGallery = ({ data }) => {
   return (
-    <ul class="gallery">
-      <ImageGalleryItem />
-    </ul>
+    <>
+      {data.length > 0 && (
+        <ul className="gallery">
+          <ImageGalleryItem data={data} />
+        </ul>
+      )}
+    </>
   );
 };

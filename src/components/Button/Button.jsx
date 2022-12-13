@@ -1,8 +1,8 @@
 import React from 'react';
 
-export const Button = () => {
+export const Button = ({ loadMore }) => {
   return (
-    <button type="button" class="button">
+    <button type="button" className="button" onClick={loadMore}>
       Load More
     </button>
   );

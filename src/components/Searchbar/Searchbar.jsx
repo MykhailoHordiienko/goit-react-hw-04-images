@@ -1,20 +1,21 @@
 import React from 'react';
 import { FcSearch } from 'react-icons/fc';
 
-export const Searchbar = () => {
+export const Searchbar = ({ onSubmit }) => {
   return (
-    <header class="searchbar">
-      <form class="form">
-        <button type="submit" class="search-button">
+    <header className="searchbar">
+      <form className="form" onSubmit={onSubmit}>
+        <button type="submit" className="search-button">
           <FcSearch width={20} />
           <span>Search</span>
         </button>
 
         <input
-          class="input"
+          className="input"
+          name="query"
           type="text"
-          autocomplete="off"
-          autofocus
+          autoComplete="off"
+          autoFocus
           placeholder="Search images and photos"
         />
       </form>
