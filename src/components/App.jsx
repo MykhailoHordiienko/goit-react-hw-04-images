@@ -4,6 +4,7 @@ import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Loader } from './Loader/Loader';
 import { Searchbar } from './Searchbar/Searchbar';
 import { getImages } from './ApiSearch/AppiSearch.js';
+import toast, { Toaster } from 'react-hot-toast';
 
 export class App extends Component {
   state = {
@@ -14,15 +15,16 @@ export class App extends Component {
   };
 
   async componentDidMount() {
-    this.loderControlTogle();
-
     try {
+      this.loderControlTogle();
+
       const data = await getImages();
       this.setState({ data: data.data.hits });
-    } catch (error) {
-      console.log(error);
+    } catch {
+      toast.error('Oops, reload Please');
+    } finally {
+      this.loderControlTogle();
     }
-    this.loderControlTogle();
   }
 
   componentDidUpdate(_, prevState) {
@@ -47,17 +49,23 @@ export class App extends Component {
   getData = async () => {
     const { query } = this.state;
     const { page } = this.state;
-    this.loderControlTogle();
-    try {
-      const data = await getImages(query, page);
 
+    try {
+      this.loderControlTogle();
+      const data = await getImages(query, page);
+      if (data.data.hits.length <= 0) {
+        toast('Change your request', {
+          icon: '😱😨😰',
+        });
+      }
       this.setState(prevState => ({
         data: [...prevState.data, ...data.data.hits],
       }));
-    } catch (error) {
-      console.log(error);
+    } catch {
+      toast.error('Oops, reload Please');
+    } finally {
+      this.loderControlTogle();
     }
-    this.loderControlTogle();
   };
 
   loadMore = () => {
@@ -79,9 +87,10 @@ export class App extends Component {
     return (
       <div className="app">
         <Searchbar onSubmit={handleSubmit} />
-        {loader && <Loader />}
         <ImageGallery data={data} />
+        {loader && <Loader />}
         {data.length > 0 && <Button loadMore={loadMore} />}
+        <Toaster />
       </div>
     );
   }
