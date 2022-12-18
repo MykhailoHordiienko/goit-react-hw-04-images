@@ -33,6 +33,6 @@ export class Modal extends Component {
 }
 
 Modal.propTypes = {
-  imgUrl: PropTypes.array.isRequired,
+  imgUrl: PropTypes.string.isRequired,
   alt: PropTypes.string.isRequired,
 };

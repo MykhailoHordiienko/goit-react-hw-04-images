@@ -3,7 +3,7 @@ import { Button } from './Button/Button';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Loader } from './Loader/Loader';
 import { Searchbar } from './Searchbar/Searchbar';
-import { getImages } from './ApiSearch/AppiSearch.js';
+import { getImages } from '../ApiSearch/AppiSearch.js';
 import toast, { Toaster } from 'react-hot-toast';
 
 export class App extends Component {
@@ -14,18 +14,22 @@ export class App extends Component {
     loader: false,
   };
 
-  async componentDidMount() {
-    try {
-      this.loderControlTogle();
+  //   async componentDidMount() {
+  //     if (this.state.query === '') {
+  //       return;
+  //     }
+  //     try {
+  //       this.loderControlTogle();
 
-      const data = await getImages();
-      this.setState({ data: data.data.hits });
-    } catch {
-      toast.error('Oops, reload Please');
-    } finally {
-      this.loderControlTogle();
-    }
-  }
+  //       const data = await getImages();
+  //       console.log(data.data.hits);
+  //       this.setState({ data: data.data.hits });
+  //     } catch {
+  //       toast.error('Oops, reload Please');
+  //     } finally {
+  //       this.loderControlTogle();
+  //     }
+  //   }
 
   componentDidUpdate(_, prevState) {
     if (prevState.query !== this.state.query) {
@@ -58,8 +62,14 @@ export class App extends Component {
           icon: '😱😨😰',
         });
       }
+      const filteredData = data.data.hits.map(el => {
+        const { id, webformatURL, largeImageURL, tags } = el;
+        const renderData = { id, webformatURL, largeImageURL, tags };
+
+        return renderData;
+      });
       this.setState(prevState => ({
-        data: [...prevState.data, ...data.data.hits],
+        data: [...prevState.data, ...filteredData],
       }));
     } catch {
       toast.error('Oops, reload Please');

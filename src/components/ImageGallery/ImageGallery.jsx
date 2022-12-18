@@ -7,7 +7,14 @@ export const ImageGallery = ({ data }) => {
     <>
       {data.length > 0 && (
         <ul className="gallery">
-          <ImageGalleryItem data={data} />
+          {data.map(({ id, webformatURL, largeImageURL, tags }) => (
+            <ImageGalleryItem
+              key={id}
+              webformatURL={webformatURL}
+              largeImageURL={largeImageURL}
+              tags={tags}
+            />
+          ))}
         </ul>
       )}
     </>
