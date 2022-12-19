@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from './Button/Button';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Loader } from './Loader/Loader';
@@ -6,102 +6,66 @@ import { Searchbar } from './Searchbar/Searchbar';
 import { getImages } from '../ApiSearch/AppiSearch.js';
 import toast, { Toaster } from 'react-hot-toast';
 
-export class App extends Component {
-  state = {
-    query: '',
-    page: 1,
-    data: [],
-    loader: false,
-  };
+export const App = () => {
+  const [query, setQuery] = useState('');
+  const [page, setPage] = useState(1);
+  const [data, setData] = useState([]);
+  const [loader, setLoader] = useState(false);
 
-  //   async componentDidMount() {
-  //     if (this.state.query === '') {
-  //       return;
-  //     }
-  //     try {
-  //       this.loderControlTogle();
-
-  //       const data = await getImages();
-  //       console.log(data.data.hits);
-  //       this.setState({ data: data.data.hits });
-  //     } catch {
-  //       toast.error('Oops, reload Please');
-  //     } finally {
-  //       this.loderControlTogle();
-  //     }
-  //   }
-
-  componentDidUpdate(_, prevState) {
-    if (prevState.query !== this.state.query) {
-      this.getData();
+  useEffect(() => {
+    if (query === '') {
+      return;
     }
-    if (prevState.page !== this.state.page && this.state.page !== 1) {
-      this.getData();
-    }
-  }
+    async function getData() {
+      try {
+        loderControlTogle();
+        const data = await getImages(query, page);
+        if (data.data.hits.length <= 0) {
+          toast('Change your request', {
+            icon: '😱😨😰',
+          });
+        }
+        const filteredData = data.data.hits.map(el => {
+          const { id, webformatURL, largeImageURL, tags } = el;
+          const renderData = { id, webformatURL, largeImageURL, tags };
 
-  handleSubmit = e => {
-    e.preventDefault();
-    const query = e.currentTarget.elements.query.value;
-    this.setState(prevState => {
-      if (prevState.query !== query) {
-        return { query, page: 1, data: [] };
-      }
-    });
-  };
-
-  getData = async () => {
-    const { query } = this.state;
-    const { page } = this.state;
-
-    try {
-      this.loderControlTogle();
-      const data = await getImages(query, page);
-      if (data.data.hits.length <= 0) {
-        toast('Change your request', {
-          icon: '😱😨😰',
+          return renderData;
         });
+        setData(prev => [...prev, ...filteredData]);
+      } catch {
+        toast.error('Oops, reload Please');
+      } finally {
+        loderControlTogle();
       }
-      const filteredData = data.data.hits.map(el => {
-        const { id, webformatURL, largeImageURL, tags } = el;
-        const renderData = { id, webformatURL, largeImageURL, tags };
+    }
+    getData();
+  }, [page, query]);
 
-        return renderData;
-      });
-      this.setState(prevState => ({
-        data: [...prevState.data, ...filteredData],
-      }));
-    } catch {
-      toast.error('Oops, reload Please');
-    } finally {
-      this.loderControlTogle();
+  const handleSubmit = e => {
+    e.preventDefault();
+    const handleQuery = e.currentTarget.elements.query.value;
+    if (query !== handleQuery) {
+      setData([]);
+      setPage(1);
+      setQuery(handleQuery);
     }
   };
 
-  loadMore = () => {
-    this.setState(prevState => ({
-      page: prevState.page + 1,
-    }));
+  const loadMore = () => {
+    setPage(prev => prev + 1);
   };
 
-  loderControlTogle = () => {
-    this.setState(prevState => ({
-      loader: !prevState.loader,
-    }));
+  const loderControlTogle = () => {
+    setLoader(prev => !prev);
   };
 
-  render() {
-    const { handleSubmit, loadMore } = this;
-    const { data, loader } = this.state;
-
-    return (
-      <div className="app">
-        <Searchbar onSubmit={handleSubmit} />
-        <ImageGallery data={data} />
-        {loader && <Loader />}
-        {data.length > 0 && <Button loadMore={loadMore} />}
-        <Toaster />
-      </div>
-    );
-  }
-}
+  return (
+    <div className="app">
+      <Searchbar onSubmit={handleSubmit} />
+      <ImageGallery data={data} />
+      {loader && <Loader />}
+      {data.length > 0 && <Button loadMore={loadMore} />}
+      <Toaster />
+    </div>
+  );
+};

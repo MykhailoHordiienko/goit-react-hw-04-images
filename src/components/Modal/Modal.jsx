@@ -1,36 +1,34 @@
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-export class Modal extends Component {
-  handleClickBacdrop = e => {
+export const Modal = ({ imgUrl, alt, togleModal }) => {
+  const handleClickBacdrop = e => {
     if (e.target === e.currentTarget) {
-      this.props.togleModal();
+      togleModal();
     }
   };
-  closeModalEsc = e => {
+  const closeModalEsc = e => {
     if (e.code === 'Escape') {
-      this.props.togleModal();
+      togleModal();
     }
   };
-  componentDidMount() {
-    window.addEventListener('keydown', this.closeModalEsc);
-  }
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.closeModalEsc);
-  }
 
-  render() {
-    const { imgUrl, alt } = this.props;
-    const { handleClickBacdrop } = this;
-    return (
-      <div className="overlay" onClick={handleClickBacdrop}>
-        <div className="modal">
-          <img src={imgUrl} alt={alt} />
-        </div>
+  useEffect(() => {
+    window.addEventListener('keydown', closeModalEsc);
+
+    return () => {
+      window.removeEventListener('keydown', closeModalEsc);
+    };
+  }, []);
+
+  return (
+    <div className="overlay" onClick={handleClickBacdrop}>
+      <div className="modal">
+        <img src={imgUrl} alt={alt} />
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 Modal.propTypes = {
   imgUrl: PropTypes.string.isRequired,
