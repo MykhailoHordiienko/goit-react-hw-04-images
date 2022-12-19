@@ -19,7 +19,7 @@ export const Modal = ({ imgUrl, alt, togleModal }) => {
     return () => {
       window.removeEventListener('keydown', closeModalEsc);
     };
-  }, []);
+  });
 
   return (
     <div className="overlay" onClick={handleClickBacdrop}>
